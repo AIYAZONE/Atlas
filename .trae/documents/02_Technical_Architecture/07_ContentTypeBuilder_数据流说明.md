@@ -1,31 +1,95 @@
-# Content Type Builder 数据流说明
+# Content Type Builder 数据流说明 (Shopify 兼容版)
 
-## 数据模型
-- ContentType：id、name、fields[]、relations[]、locales[]、version、status
-- Field：id、type（text/number/richtext/media/component/enum/...）、options、validators[]
-- Component：id、schema（嵌套字段集）、version
-- DynamicZone：允许多组件列表，按顺序排列
+## 1. 核心数据模型
 
-## 流程概览
-- Builder UI 编辑 → 校验与预览 → 保存到 schema 真源 → 更新内容条目 → 渲染器生成页面 → 构建发布
+Atlas 采用 Shopify Theme 2.0 兼容的数据模型，以实现无缝迁移。
 
-## 交互步骤
-- 打开类型或页面 → 载入最新 schema 与内容
-- 编辑字段/组件/动态区 → 本地校验与预览渲染
-- 保存 → 写入 schema 包（JSON）与数据库内容
-- 预览 → renderer 读 schema + content 生成视图
-- 发布 → 触发构建，产出静态页面并版本化
+* **Component Definition** (`{% schema %}`):
 
-## 校验与版本
-- 校验：字段类型、必填、范围、正则、关系引用存在性
-- 版本：schema 与内容分别版本；发布绑定具体版本号
-- 差异：展示 schema 版本 diff 与回滚
+  * `type`: 组件唯一标识 (e.g. `hero-banner`)
 
-## 渲染数据
-- 输入：schema.json、content.json、媒体元数据
-- 输出：组件树 AST → Vue 组件 → HTML（SSG/SSR）
-- 缓存：按 schema+content 哈希缓存渲染结果
+  * `settings`: 全局配置字段 (e.g. `title`, `background_color`)
 
-## 关系与引用
-- 内容间关系（如产品→分类）在渲染时可聚合
-- 媒体引用计数与断联预警在保存/构建阶段写入
+  * `blocks`: 允许的子块类型定义 (e.g. `slide`)
+
+  * `presets`: 默认预设配置
+
+* **Section Instance** (Template JSON Section):
+
+  * `type`: 引用 Component Definition
+
+  * `settings`: 实际配置值 (Key-Value)
+
+  * `blocks`: 子块实例 Map (Key: UUID, Value: BlockInstance)
+
+  * `block_order`: 子块渲染顺序数组 (UUID\[])
+
+* **Page Instance** (Template JSON):
+
+  * `sections`: 页面内所有 Section 的 Map
+
+  * `order`: Section 渲染顺序数组
+
+## 2. 流程概览
+
+Builder UI 编辑 → 实时 Schema 校验 → 乐观更新与预览 (`postMessage`) → 保存到 Supabase (`pages` table) → 触发 SSG 构建
+
+## 3. 交互步骤详细
+
+1. **初始化**: Editor 加载页面数据 (`PageInstance`) 和所有可用组件的 Schema (`ComponentDefinition[]`).
+2. **编辑操作**:
+
+   * **修改 Setting**: 更新 `section.settings[key]`，通过 `postMessage` 发送全量/增量数据给 Preview iframe。
+
+   * **添加 Block**: 生成新 UUID，在 `blocks` map 中添加实例，并 push 到 `block_order`。
+
+   * **排序**: 修改 `order` (Section) 或 `block_order` (Block) 数组。
+3. **实时预览**:
+
+   * Preview iframe 监听 `message` 事件。
+
+   * Vue 组件接收新的 props (`settings`, `blocks`, `block_order`) 并触发响应式重绘。
+4. **保存**:
+
+   * Editor 将当前的 `PageInstance` JSON 提交到后端 API。
+
+   * 后端进行 Schema 校验（Zod）并存入 PostgreSQL。
+5. **发布**:
+
+   * 用户点击发布，触发 Webhook。
+
+   * Builder Worker 拉取最新 Page Data，执行 `nuxt generate`。
+
+## 4. 校验与约束
+
+* **字段类型校验**: 确保 `settings` 值符合 Schema 定义的 `type` (e.g. number 必须是数字)。
+
+* **数量限制**: 检查 `max_blocks` 限制。
+
+* **引用完整性**: 确保 `block_order` 中的 ID 在 `blocks` 中存在。
+
+## 5. 渲染数据流
+
+* **输入**: `PageInstance` JSON
+
+* **转换**:
+
+  ```typescript
+  // 伪代码：将扁平结构转换为渲染树
+  const renderTree = page.order.map(sectionId => {
+    const section = page.sections[sectionId];
+    const orderedBlocks = section.block_order.map(blockId => section.blocks[blockId]);
+    return { ...section, blocks: orderedBlocks };
+  });
+  ```
+
+* **输出**: Vue 组件树 → 静态 HTML
+
+## 6. 多语言数据流
+
+* **定义**: 开发者定义 `TranslationSchema`。
+
+* **配置**: 运营在 Editor 中修改翻译，存入 `site_locale_config`。
+
+* **消费**: 应用启动时注入 `jds-i18n`，组件中使用 `$t('key')` 或 Schema 中的 `t:` 引用自动解析。
+
