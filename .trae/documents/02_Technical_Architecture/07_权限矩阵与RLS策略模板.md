@@ -1,4 +1,4 @@
-# 角色/权限矩阵与 Supabase RLS 策略模板
+# 角色/权限矩阵与 Postgres RLS 策略模板
 
 ## 角色与资源
 - 角色：Admin、Editor、Publisher、Viewer、Service
@@ -93,5 +93,4 @@ with check (
 - 双人复核：发布、回滚、删除媒体需审批；通过工作流表记录 state 与 approver_id
 
 ## 迁移到后端网关的策略
-- 保留最小 RLS（org_id 隔离与发布只读），将细粒度权限与审批迁移至后端网关（NestJS Guards + Policy Engine）
-
+- 保留最小 RLS（org_id 隔离与发布只读），将细粒度权限与审批迁移至后端网关（Spring Security + Policy Engine）

@@ -58,6 +58,10 @@
 
 * [09\_架构设计图表.md](02_Technical_Architecture/09_架构设计图表.md) - 关键架构图
 
+* [10\_SLA与发布体系（99.9\_10000页）.md](02_Technical_Architecture/10_SLA与发布体系（99.9_10000页）.md) - SLA 与发布体系
+
+* [06\_ADR\_Java\_vs\_Node.md](02_Technical_Architecture/06_ADR/06_ADR_Java_vs_Node.md) - 技术选型决策：Java vs Node
+
 * [11\_PluginAPI\_草案与示例.md](02_Technical_Architecture/11_PluginAPI_草案与示例.md) - 扩展机制
 
 * [11\_开发重难点清单.md](02_Technical_Architecture/11_开发重难点清单.md) - 技术攻坚点
@@ -72,13 +76,5 @@
 
 * [10\_核心风险与应对策略.md](03_DevOps_Risk/10_核心风险与应对策略.md) - 风险控制
 
-## 📂 99\_Insights (思考与心得)
-
-包含创始人思维模型、架构师进阶与项目命名。
-
-* [90\_架构师进阶实战.md](99_Insights/90_架构师进阶实战.md)
-
-* [99\_创始人之路\_思维模型.md](99_Insights/99_创始人之路_思维模型.md)
-
-* [99\_项目命名含义.md](99_Insights/99_项目命名含义.md)
+* [11\_全局组件批量发布方案.md](03_DevOps_Risk/11_Publishing/11_全局组件批量发布方案.md) - Header/Footer/Cookie Banner 批量发布
 

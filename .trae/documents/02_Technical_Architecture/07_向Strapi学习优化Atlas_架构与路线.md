@@ -1,61 +1,84 @@
-# 向 Strapi 学习优化 Atlas 的产品与架构（含 MVP 路线）
+# Atlas 文档索引（Docs Index）
 
-## 背景与目标
-- 在不改变既定“Vue/Nuxt + Supabase + 纯静态发布 + 电商闭环”的 MVP 路线下，引入 Strapi 的成熟理念（内容类型、组件、动态区、媒体库、RBAC、插件、GraphQL），提升可配置性、安全性与演进能力。
+> 文档目录已重构，按照业务域进行分类。
 
-## 核心理念（通俗解释）
-- 内容类型（Content Type）：结构化数据模板（如文章、页面、产品），定义字段、校验与关系。
-- 组件（Component）：可复用的子结构（如图文块/轮播），可嵌入到内容类型字段。
-- 动态区（Dynamic Zone）：页面中的可插拔区域，允许放入多种组件，像乐高拼装。
-- 媒体库（Media Library）：统一管理图片/视频等资源，提供元数据与多规格处理。
-- RBAC（角色-权限）：按角色细化到内容类型与操作（读/写/发布），默认安全策略。
-- 插件（Plugin）：在核心之外扩展字段、组件、校验、数据源与发布流程。
-- API 模式：REST（写入/简单读）与 GraphQL（聚合/灵活查询）并存，前端友好。
+## 📂 00\_Project\_Management (项目管理)
 
-## 现状映射与落地
-- DSL 统一：现有 Section/Block DSL → 抽象为“内容类型 + 组件 + 动态区”，由 schema 包产出 JSON 作为唯一真源。
-- 应用分层：builder 提供可视化建模与拖拽，preview 实时渲染，site-runtime 负责 SSG 输出。
-- 数据与 API：Supabase/PostgREST 保留 CRUD；边缘函数承接 Shopify 代理与订单 Webhook；后续 NestJS 接管复杂编排。
+包含立项决策、进度规划、周会推进与汇报材料。
 
-## 渐进式改造（保持既定 MVP）
-### Phase 1：内容模型统一 + RBAC 基线 + 媒体库（低风险优先）
-- 内容：把 DSL 统一到 Content Type + Component + Dynamic Zone；支持草稿/发布与版本号。
-- 权限：基于角色生成 RLS 策略模板（Admin/Editor/Publisher/Viewer/Service）。
-- 媒体：S3 管理、上传即生成多规格（thumb/webp/avif），元数据入库，CDN 缓存策略。
-- 验收：可视化建模能保存并渲染；不同角色操作边界正确；图片上传、引用与构建产物回滚可用。
+* [00\_项目立项与价值主张.md](00_Project_Management/00_项目立项与价值主张.md) - 商业价值、ROI分析与资产沉淀
 
-### Phase 2：电商闭环与发布治理
-- 购物车与结算：边缘函数代理 Storefront，checkout webUrl 跳转；价格/库存拉取缓存。
-- 订单：Admin Webhook 入库到规范化表；订单查询与状态更新。
-- 发布：构建产物版本化、审计日志、CloudFront 失效与一键回滚。
-- 验收：购物车、结算、订单流程串通；发布有审计与回滚成功记录。
+* [00\_ROI财务测算表.md](00_Project_Management/00_ROI财务测算表.md) - 成本/收益测算模板
 
-### Phase 3：i18n 与插件体系
-- i18n：内容字段按 locale；slug/SEO 随语言；构建按语言分层输出与路由前缀。
-- 插件：定义 Plugin API（字段/组件/校验/渲染器/数据源/发布钩子），隔离扩展与核心。
-- 验收：同一页面多语言编辑与渲染正常；至少一个插件通过生命周期钩子接入可用。
+* [00\_管理层决策摘要.md](00_Project_Management/00_管理层决策摘要.md) - 汇报决策要点
 
-### Phase 4：GraphQL（只读）与可观测性
-- GraphQL 只读：启用 pg_graphql 或后续 NestJS GraphQL 做聚合查询，前端复杂视图更友好。
-- 可观测性：发布耗时、构建错误、队列积压、函数失败率、审计事件指标看板。
-- 验收：前端一个聚合视图走 GraphQL；监控面板可视、告警阈值生效。
+* [00\_决策汇报版\_一页版.md](00_Project_Management/00_决策汇报版_一页版.md) - One-Pager Deck
 
-## 时间与风险评估（对齐 4–6 周的现实性）
-- 建议节奏：Phase 1（2 周）→ Phase 2（2 周）→ Phase 3（1–2 周）→ Phase 4（1 周并行/收尾）。
-- 风险与缓解：
-  - 团队技术储备/架构/细节未定 → 以 Schema 真源与 RBAC 模板先落地，减少不确定面；
-  - 每阶段设验收用例与演示，严控范围避免蔓延。
+* [00\_项目概览与路线图.md](00_Project_Management/00_项目概览与路线图.md) - 宏观路线图
 
-## 成本与收益
-- 成本：梳理模型与权限策略、媒体派生任务与发布版本化。
-- 收益：统一数据与渲染抽象、默认安全、可插拔扩展，后续演进后端更平滑。
+* [00\_MVP里程碑计划\_详细版.md](00_Project_Management/00_MVP里程碑计划_详细版.md) - 8周里程碑
 
-## 文档与 CLI
-- 文档：内容模型规范、字段命名、校验与关系约定；发布与回滚流程手册；权限矩阵清单。
-- CLI：atlas-cli 支持 init/generate/migrate/publish/seed；turbo 编排 lint/type-check/test。
+* [00\_周会推进检查清单.md](00_Project_Management/00_周会推进检查清单.md) - 周会核查Checklist
 
-## 后续演进（不影响 MVP）
-- NestJS + Prisma 接管复杂鉴权与编排；REST + GraphQL 统一网关与 OpenAPI；事件驱动（SQS/EventBridge）；缓存层（Redis）。
+## 📂 01\_Product\_Design (产品与设计)
 
-## 交付物清单
-- 文档：本文件（架构与路线），权限矩阵与 RLS 策略模板、媒体与 CDN 策略、发布审计与回滚流程、Content Type Builder 数据流、Plugin API 草案与示例。
+包含 PRD、用户画像、UI/UX 规范与交互流程。
+
+* [01\_MVP产品需求文档.md](01_Product_Design/01_MVP产品需求文档.md) - 核心功能定义
+
+* [02\_用户画像.md](01_Product_Design/02_用户画像.md) - Persona
+
+* [03\_UI\_UX设计规范.md](01_Product_Design/03_UI_UX设计规范.md) - 设计系统基础
+
+* [04\_视觉资产与设计规范汇总.md](01_Product_Design/04_视觉资产与设计规范汇总.md) - 资产清单
+
+* [05\_全站交互规范说明书.md](01_Product_Design/05_全站交互规范说明书.md) - 交互细节
+
+* [06\_全链路MVP交互流程.md](01_Product_Design/06_全链路MVP交互流程.md) - 核心用户旅程
+
+## 📂 02\_Technical\_Architecture (技术架构)
+
+包含系统架构、后端设计、数据流、API 与权限安全。
+
+* [07\_技术架构文档.md](02_Technical_Architecture/07_技术架构文档.md) - 顶层架构设计
+
+* [07\_Schema设计规范\_Shopify兼容版.md](02_Technical_Architecture/07_Schema设计规范_Shopify兼容版.md) - 核心数据模型 (SSOT)
+
+* [07\_ContentTypeBuilder\_数据流说明.md](02_Technical_Architecture/07_ContentTypeBuilder_数据流说明.md) - 数据流向
+
+* [migration-example.md](02_Technical_Architecture/migration-example.md) - Shopify 迁移示例
+
+* [i18n-management-spec.md](02_Technical_Architecture/i18n-management-spec.md) - 多语言管理规范
+
+* [07\_向Strapi学习优化Atlas\_架构与路线.md](02_Technical_Architecture/07_向Strapi学习优化Atlas_架构与路线.md) - 架构优化思路
+
+* [07\_权限矩阵与RLS策略模板.md](02_Technical_Architecture/07_权限矩阵与RLS策略模板.md) - 安全策略
+
+* [08\_后端总体设计.md](02_Technical_Architecture/08_后端总体设计.md) - 后端实现细节
+
+* [09\_架构设计图表.md](02_Technical_Architecture/09_架构设计图表.md) - 关键架构图
+
+* [11\_PluginAPI\_草案与示例.md](02_Technical_Architecture/11_PluginAPI_草案与示例.md) - 扩展机制
+
+* [11\_开发重难点清单.md](02_Technical_Architecture/11_开发重难点清单.md) - 技术攻坚点
+
+## 📂 03\_DevOps\_Risk (运维与风险)
+
+包含发布流程、CDN 策略与风险管理。
+
+* [10\_发布审计与回滚流程.md](03_DevOps_Risk/10_发布审计与回滚流程.md) - 发布治理
+
+* [10\_媒体与CDN策略规范.md](03_DevOps_Risk/10_媒体与CDN策略规范.md) - 静态资源策略
+
+* [10\_核心风险与应对策略.md](03_DevOps_Risk/10_核心风险与应对策略.md) - 风险控制
+
+## 📂 99\_Insights (思考与心得)
+
+包含创始人思维模型、架构师进阶与项目命名。
+
+* [90\_架构师进阶实战.md](99_Insights/90_架构师进阶实战.md)
+
+* [99\_创始人之路\_思维模型.md](99_Insights/99_创始人之路_思维模型.md)
+
+* [99\_项目命名含义.md](99_Insights/99_项目命名含义.md)
+

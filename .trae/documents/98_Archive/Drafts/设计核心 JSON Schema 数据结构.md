@@ -1,5 +1,7 @@
 # Schema 优化设计方案 (Shopify 兼容版)
 
+> 已合并至主干规范文档：[07_Schema设计规范_Shopify兼容版.md](../../02_Technical_Architecture/07_Schema设计规范_Shopify兼容版.md)。本文件仅作历史参考，不再维护。
+
 ## 1. 核心策略：对齐 Shopify DSL
 为了最大化未来的迁移便利性，我们的 Schema 设计将**严格对齐 Shopify Theme 2.0 的数据结构**。这样做的好处是：
 1.  **迁移零成本**：可以直接导入 Shopify 导出的 `templates/*.json` 文件，甚至无需转换。

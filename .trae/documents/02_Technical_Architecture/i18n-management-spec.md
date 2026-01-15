@@ -74,6 +74,20 @@ Atlas 后端将存储全量的翻译数据，结构如下：
 }
 ```
 
+### 2.3 存储结构选型（扁平 Key vs 层级 JSON）
+#### 扁平 Key（key-value）
+- 结构：`Record<locale, Record<key, value>>`，例如 `cart.general.title -> "Your Cart"`
+- 优点：更适合表格编辑、diff 清晰、增量同步简单
+- 缺点：plural/富文本等复杂类型需要额外编码；运行时可能需要从扁平 Key 还原结构
+
+#### 层级 JSON（树形）
+- 结构：`Record<locale, object>`，例如 `translations.en.cart.general.title`
+- 优点：直观表达模块层级；plural 可直接用对象表达；与部分 i18n runtime 的 messages 结构更贴近
+- 缺点：diff/合并冲突更容易发生在大对象上；做增量更新需要更细粒度的 patch 机制
+
+#### 推荐默认
+- 内部存储优先选择“扁平 Key”以优化编辑与变更审计；运行时导出时可转换为层级 JSON（或直接让 runtime 消费扁平结构）。
+
 ## 3. 集成流程 (Adapter Pattern)
 
 ### 3.1 注入到 jds-i18n
@@ -99,7 +113,14 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 2.  **中间表单**：点击某个 Key，右侧显示 Label、Description 和多语言输入框。
 3.  **实时预览**：修改文案后，通过 `postMessage` 通知 Preview iframe 更新 `jds-i18n` 的 messages 数据，实现即时生效。
 
-## 4. 优势
+## 4. 落地清单（最小闭环）
+1. 定义 TranslationSchema（分组、字段类型、变量约束、默认文案）。
+2. 提供翻译编辑面板（按组导航、按 key 编辑、多语言输入）。
+3. 保存与校验（变量不丢失、plural 结构合法、富文本白名单策略）。
+4. 运行时注入（按站点/语言加载 translations 并注入 jds-i18n）。
+5. 发布链路集成（翻译变更触发依赖页面增量发布或全站发布）。
+
+## 5. 优势
 1.  **运营自主性**：运营可以随时修改文案，无需依赖开发发版。
 2.  **类型安全**：Schema 定义了变量约束，编辑器可以校验用户是否误删了 `{{ count }}` 变量。
 3.  **无缝兼容**：底层运行时逻辑完全复用现有的 `jds-i18n`，改造成本极低。

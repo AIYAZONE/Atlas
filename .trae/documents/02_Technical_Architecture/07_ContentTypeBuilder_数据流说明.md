@@ -32,7 +32,7 @@ Atlas 采用 Shopify Theme 2.0 兼容的数据模型，以实现无缝迁移。
 
 ## 2. 流程概览
 
-Builder UI 编辑 → 实时 Schema 校验 → 乐观更新与预览 (`postMessage`) → 保存到 Supabase (`pages` table) → 触发 SSG 构建
+Builder UI 编辑 → 实时 Schema 校验 → 乐观更新与预览 (`postMessage`) → 调用 Java API 保存（Postgres `pages` table）→ 触发 SSG 构建
 
 ## 3. 交互步骤详细
 
@@ -53,10 +53,10 @@ Builder UI 编辑 → 实时 Schema 校验 → 乐观更新与预览 (`postMessa
 
    * Editor 将当前的 `PageInstance` JSON 提交到后端 API。
 
-   * 后端进行 Schema 校验（Zod）并存入 PostgreSQL。
+   * 后端进行 Schema 校验并存入 PostgreSQL。
 5. **发布**:
 
-   * 用户点击发布，触发 Webhook。
+   * 用户点击发布，触发发布任务（Java 调用 Node Worker 或投递队列）。
 
    * Builder Worker 拉取最新 Page Data，执行 `nuxt generate`。
 
@@ -92,4 +92,3 @@ Builder UI 编辑 → 实时 Schema 校验 → 乐观更新与预览 (`postMessa
 * **配置**: 运营在 Editor 中修改翻译，存入 `site_locale_config`。
 
 * **消费**: 应用启动时注入 `jds-i18n`，组件中使用 `$t('key')` 或 Schema 中的 `t:` 引用自动解析。
-

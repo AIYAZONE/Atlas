@@ -61,6 +61,23 @@ interface SettingDefinition {
 }
 ```
 
+## 3. 编辑器元信息字段（UI Meta）
+在严格兼容 Shopify 核心结构的前提下，Atlas 允许补充一些“仅用于编辑器/渲染器”的元信息字段，以提升搭建体验与组件组织能力。
+
+### 3.1 ComponentDefinition 扩展字段（可选）
+- `class`：容器 class（用于 Shopify 兼容或渲染器容器样式）
+- `tag`：渲染标签或渲染器提示（如 section 容器语义）
+- `icon`：组件库图标标识
+- `category`：组件库分类（用于编辑器分组/筛选）
+- `presets`：默认预设（用于快速插入与初始化默认 settings/blocks）
+
+### 3.2 SettingDefinition 扩展字段（可选）
+- `info`：帮助文案（支持 t:）
+- `placeholder`：占位提示（支持 t:）
+- `options`：用于 select/radio 等枚举型字段的选项列表
+- `min/max/step/unit`：用于 number/range 等数值型字段的约束与显示单位
+- `accept`：用于 media/file 等类型的白名单（如 image/*）
+
 ## 3. 字段类型 (Setting Types)
 Atlas 支持 Shopify 原生的所有核心字段类型：
 
@@ -78,7 +95,16 @@ Atlas 支持 Shopify 原生的所有核心字段类型：
 | `select` | 下拉选 | Select |
 | `range` | 滑动条 | Slider |
 
-## 4. 多语言支持 (i18n)
+## 4. 高级字段类型与约束
+### 4.1 高级类型（html/liquid）
+- `html`：允许渲染器原样输出的受控 HTML（需做安全策略与白名单约束）
+- `liquid`：仅用于迁移兼容的占位类型，MVP 默认不执行（避免服务端模板注入与跨站风险）
+
+### 4.2 校验与安全边界
+- Schema 校验：保存时必须按 SettingDefinition/BlockDefinition 校验字段类型与约束（min/max/options/accept 等）。
+- 安全约束：任何可执行/可注入的内容（如 html/liquid）必须走白名单与清洗策略，避免 XSS/模板注入。
+
+## 5. 多语言支持 (i18n)
 
 Schema 中的文本字段（如 `label`, `info`, `group`）支持使用 `t:` 语法引用翻译键。
 
@@ -86,7 +112,7 @@ Schema 中的文本字段（如 `label`, `info`, `group`）支持使用 `t:` 语
 - **示例**: `label: "t:sections.hero.settings.title.label"`
 - **解析**: 编辑器会根据当前站点的语言配置，从 `TranslationDefinition` 中查找对应的文本。
 
-## 5. 迁移映射示例
+## 6. 迁移映射示例
 
 ### Shopify Template JSON
 ```json
