@@ -48,6 +48,8 @@
 
 * [07\_ContentTypeBuilder\_数据流说明.md](02_Technical_Architecture/07_ContentTypeBuilder_数据流说明.md) - 数据流向
 
+* [07\_平台与站点工程边界（MVP方案A）.md](02_Technical_Architecture/07_平台与站点工程边界（MVP方案A）.md) - 多站点多主题工程边界与装配
+
 * [migration-example.md](02_Technical_Architecture/migration-example.md) - Shopify 迁移示例
 
 * [i18n-management-spec.md](02_Technical_Architecture/i18n-management-spec.md) - 多语言管理规范
