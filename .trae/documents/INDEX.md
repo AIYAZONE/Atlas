@@ -16,6 +16,8 @@
 
 * [00\_项目概览与路线图.md](00_Project_Management/00_项目概览与路线图.md) - 宏观路线图
 
+* [00\_架构演示提纲\_30分钟.md](00_Project_Management/00_架构演示提纲_30分钟.md) - 内部演示用讲稿与跳转入口
+
 * [00\_MVP里程碑计划\_详细版.md](00_Project_Management/00_MVP里程碑计划_详细版.md) - 8周里程碑
 
 * [00\_周会推进检查清单.md](00_Project_Management/00_周会推进检查清单.md) - 周会核查Checklist
@@ -77,4 +79,3 @@
 * [10\_核心风险与应对策略.md](03_DevOps_Risk/10_核心风险与应对策略.md) - 风险控制
 
 * [11\_全局组件批量发布方案.md](03_DevOps_Risk/11_Publishing/11_全局组件批量发布方案.md) - Header/Footer/Cookie Banner 批量发布
-
