@@ -40,10 +40,9 @@
 
 * 站点记录字段：`theme_id@version`、`enabled_features[]`、`content_version`、`config_version`。
 
-## 我将要在仓库里做的改动（你确认后执行）
+## 已落地的主干文档入口（以此为准）
 
-1. 新增一份主干文档：《平台/主题/能力包/站点实例：MVP方案A工程边界与装配》
-2. 在《07\_技术架构文档.md》补一段“多站点多主题装配”摘要与链接
-3. 在《10\_SLA与发布体系（99.9\_10000页）.md》补充发布记录口径：包含 theme\_version/feature\_versions
-4. 更新 INDEX.md：增加上述新文档入口
-
+* 工程边界与装配（主干口径）：[07\_平台与站点工程边界（MVP方案A）.md](./02_Technical_Architecture/07_平台与站点工程边界（MVP方案A）.md)
+* 顶层架构与装配摘要：[07\_技术架构文档.md](./02_Technical_Architecture/07_技术架构文档.md)
+* SLA 与发布审计口径：[10\_SLA与发布体系（99.9\_10000页）.md](./02_Technical_Architecture/10_SLA与发布体系（99.9_10000页）.md)
+* 发布治理闭环（审计/回滚）：[10\_发布审计与回滚流程.md](./03_DevOps_Risk/10_发布审计与回滚流程.md)

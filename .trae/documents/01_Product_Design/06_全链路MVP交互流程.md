@@ -30,7 +30,7 @@
 - 单页/全站发布：生成版本号（schema+content 哈希），构建静态 HTML。
 - 上传：dist→S3（/releases/{version}）；路由清单记录文件与校验。
 - 刷新：CloudFront Invalidate 刷新 HTML；静态资源走内容哈希不刷新。
-- 审计：记录 actor/org/version/routes_count/duration/status；支持一键回滚。
+- 审计：记录 actor/org/site/version/routes_count/duration/status，并包含装配组合版本（theme_version、feature_versions、content_version、config_version）；支持按“完整组合版本”一键回滚。
 - 参考：发布治理 [10_发布审计与回滚流程.md](../03_DevOps_Risk/10_发布审计与回滚流程.md)。
 
 ## 5. 电商购物车与结算（Cart & Checkout）
