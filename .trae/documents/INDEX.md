@@ -74,6 +74,8 @@
 
 * [14_Supabase安全与开发规范.md](02_Technical_Architecture/14_Supabase安全与开发规范.md) - **(Core)** Serverless 模式下的安全红线
 
+* [15_Phase3_Java迁移战略指南.md](02_Technical_Architecture/15_Phase3_Java迁移战略指南.md) - **(Strategy)** 确保未来可平滑迁移至 Java 的工程规范
+
 * [11_开发重难点清单.md](02_Technical_Architecture/11_开发重难点清单.md) - 技术攻坚点
 
 ## 📂 03_DevOps_Risk (运维与风险)
