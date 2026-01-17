@@ -60,15 +60,19 @@
 
 * [10\_SLA与发布体系（99.9\_10000页）.md](02_Technical_Architecture/10_SLA与发布体系（99.9_10000页）.md) - SLA 与发布体系
 
-* [06\_ADR\_Java\_vs\_Node.md](02_Technical_Architecture/06_ADR/06_ADR_Java_vs_Node.md) - 技术选型决策：Java vs Node
+* [06_ADR_Java_vs_Node.md](02_Technical_Architecture/06_ADR/06_ADR_Java_vs_Node.md) - 技术选型决策：Java vs Node
 
-* [11\_PluginAPI\_草案与示例.md](02_Technical_Architecture/11_PluginAPI_草案与示例.md) - 扩展机制
+* [07_ADR_架构路线再评估_Serverless_vs_Java.md](02_Technical_Architecture/06_ADR/07_ADR_架构路线再评估_Serverless_vs_Java.md) - **(New)** 决定 MVP 采用 Supabase 路线
+
+* [11_PluginAPI_草案与示例.md](02_Technical_Architecture/11_PluginAPI_草案与示例.md) - 扩展机制
 
 * [07\_架构演进与优化建议.md](02_Technical_Architecture/07_架构演进与优化建议.md) - **(New)** 针对长期维护的演进方向
 
 * [12_测试策略与质量保障.md](02_Technical_Architecture/12_测试策略与质量保障.md) - **(New)** 全链路测试与质量控制规范
 
 * [13_主题开发者快速上手手册.md](02_Technical_Architecture/13_主题开发者快速上手手册.md) - **(New)** 面向开发者的组件与 Schema 开发指南
+
+* [14_Supabase安全与开发规范.md](02_Technical_Architecture/14_Supabase安全与开发规范.md) - **(Core)** Serverless 模式下的安全红线
 
 * [11_开发重难点清单.md](02_Technical_Architecture/11_开发重难点清单.md) - 技术攻坚点
 

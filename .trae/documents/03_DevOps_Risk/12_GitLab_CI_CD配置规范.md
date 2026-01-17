@@ -1,85 +1,60 @@
 # Atlas GitLab CI/CD 配置规范
 
-> 本文档定义了 Atlas 项目在 GitLab CI 上的流水线标准，确保代码质量与发布稳定性。
+## 1. 概览
 
-## 1. 流水线阶段 (Stages)
+Atlas 项目采用 **Serverless (Vercel)** 部署架构。GitLab CI/CD 主要负责代码质量检查、测试执行以及触发 Vercel 的部署钩子。
+
+* **Vercel**: 托管前端 SPA (Builder/Admin) 和 Serverless Functions。
+
+* **Supabase**: 托管数据库和 Auth，CI 仅负责 Schema 迁移脚本的执行。
+
+***
+
+## 2. 流水线阶段 (Stages)
 
 ```yaml
 stages:
-  - lint
-  - test
-  - build
-  - deploy-preview
-  - deploy-prod
+  - lint      # 代码风格与类型检查
+  - test      # 单元测试与快照测试
+  - deploy    # 部署至 Vercel (Preview/Prod)
 ```
 
----
+## 3. Vercel 部署策略
 
-## 2. 核心任务定义
+由于 Vercel 深度集成了 Git 部署，我们采用 `vercel-cli` 进行手动触发以保持对流程的控制。
 
-### 2.1 Lint & Type Check
-```yaml
-lint:
-  stage: lint
-  script:
-    - pnpm install
-    - pnpm lint
-    - pnpm type-check
-  only:
-    - merge_requests
-```
+### 3.1 预览环境 (Preview)
 
-### 2.2 Unit Testing
-```yaml
-test:
-  stage: test
-  script:
-    - pnpm test:unit
-  artifacts:
-    reports:
-      junit: report.xml
-```
+* **触发条件**: Merge Request 更新
 
-### 2.3 Build (Dockerized)
-使用 Docker 镜像确保构建环境一致。
-```yaml
-build:
-  stage: build
-  image: node:20-alpine
-  script:
-    - pnpm build
-  artifacts:
-    paths:
-      - dist/
-```
+* **命令**: `vercel pull --yes && vercel build && vercel deploy --prebuilt`
 
----
+* **输出**: 在 MR 评论中回写 Preview URL
 
-## 3. 部署策略
+### 3.2 生产环境 (Production)
 
-### 3.1 预览部署 (Preview Deployment)
-- **触发条件**：每个 Merge Request。
-- **目标**：独立的 S3 Path (e.g., `s3://atlas-preview/mr-$CI_MERGE_REQUEST_IID/`)。
-- **反馈**：将预览 URL 以评论形式发回到 MR。
+* **触发条件**: `main` 分支合并
 
-### 3.2 生产部署 (Production Deployment)
-- **触发条件**：`main` 分支 Tag。
-- **审核**：需要 Maintainer 手动确认。
-- **原子切换**：更新 CloudFront Origin 或修改 S3 路径映射。
+* **命令**: `vercel deploy --prod`
 
----
+* **保护**: 需要 `manual` 确认步骤
+
+***
 
 ## 4. 环境变量管理 (Variables)
 
-- `AWS_ACCESS_KEY_ID`: S3/CloudFront 权限（Masked）。
-- `SHOPIFY_API_KEY`: Shopify 接入凭证。
-- `DATABASE_URL`: 用于集成测试的临时数据库地址。
+* `AWS_ACCESS_KEY_ID`: S3/CloudFront 权限（Masked）。
 
----
+* `SHOPIFY_API_KEY`: Shopify 接入凭证。
+
+* `DATABASE_URL`: 用于集成测试的临时数据库地址。
+
+***
 
 ## 5. 缓存优化
 
 利用 GitLab Runner 的分布式缓存：
+
 ```yaml
 cache:
   key:
@@ -88,3 +63,4 @@ cache:
   paths:
     - .pnpm-store
 ```
+

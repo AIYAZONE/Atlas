@@ -1,3 +1,12 @@
+# ADR 006: 核心后端技术栈选型（Java vs Node.js）
+
+> **⚠️ DEPRECATION WARNING (2025-01-16)**
+> **本文档的结论仅适用于 Scale 阶段 (Phase 3+)。**
+> **MVP 阶段 (Phase 1-2) 请遵循 [ADR 007: 架构路线再评估 - Serverless vs Java](./07_ADR_架构路线再评估_Serverless_vs_Java.md)。**
+
+> **状态**: 已接受 (Accepted) -> **部分取代 (Superseded by ADR 007)**
+> **日期**: 2024-12-25
+
 你提到的那段（“Java 对外唯一入口 + Node 只做渲染/预览/构建发布”）就是我对你们奉行 MVP 理念下的**推荐方案**；可以直接按它作为最终口径推进。
 
 ## 要达成的最终口径（一句话）

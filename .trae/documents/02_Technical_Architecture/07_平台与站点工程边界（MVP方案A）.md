@@ -43,14 +43,23 @@
 - 默认装配：`theme + commerce + tracking + cookie-consent`
 - 额外能力：PDP/PLP、价格库存展示、促销信息、购物车与结算跳转（由平台 Java 统一代理外部电商能力）
 
-## 4. 工程组织（方案A：单一 monorepo，强边界隔离）
-### 4.1 目录建议
-- `apps/atlas-builder`：平台编辑器
-- `apps/atlas-admin`：平台管理后台
-- `apps/atlas-api`：Java API（对外唯一入口）
-- `packages/atlas-sdk`：平台对主题/能力包提供的类型与 hooks（唯一允许依赖的平台 SDK）
-- `packages/schema`：Schema 与校验规范
-- `packages/publisher`：发布 worker / 构建执行
+### 3.1 平台工程 (Platform Engineering)
+> **职责**：生产工具的制造者。
+> **交付物**：Atlas Monorepo (Editor, SDK, Edge Functions)
+
+#### 目录结构
+```bash
+apps/
+  atlas-builder/      # 可视化编辑器 (Vue 3 + Supabase Client)
+  atlas-admin/        # 管理后台 (Vue 3 + Supabase Client)
+  atlas-functions/    # 边缘函数 (Vercel Edge Functions /server/api)
+packages/
+  atlas-sdk/          # 核心 SDK (Hooks, Types)
+  schema/             # 核心数据模型定义
+  publisher/          # 静态站点构建器 (Node Worker)
+```
+
+### 3.2 站点工程 (Site Engineering)
 - `themes/*`：主题包（按品牌/设计体系划分）
 - `features/*`：能力包（commerce、tracking、cookie-consent）
 - `sites/*`：站点 seed/示例配置（不放业务代码）

@@ -18,14 +18,15 @@
 ### Week 1: 初始化与规范
 - [ ] 初始化 Monorepo (Turborepo + pnpm)
 - [ ] 搭建 Nuxt 3 + Pinia + TailwindCSS 项目结构
+- [ ] 搭建 Supabase 本地开发环境 (Supabase CLI)
 - [ ] 配置 ESLint / Prettier / CommitLint (**强制规范**)
 - [ ] **关键任务**：定义核心 JSON Schema (Page/Section/Block) 数据结构
 
 ### Week 2: 连通性验证
-- [ ] 搭建 Supabase (Auth, Database)
-- [ ] 封装基础 API 请求客户端 (useFetch 封装)
+- [ ] 初始化 Supabase (Auth, Database, RLS Policy)
+- [ ] 封装基础 API 请求客户端 (useSupabase 封装)
 - [ ] 实现一个简单的 "Hello World" 页面：从 DB 读取标题并在页面显示
-- [ ] **团队培训**：Vue 3 Composition API 最佳实践分享
+- [ ] **团队培训**：Vue 3 Composition API 与 Supabase RLS 最佳实践
 
 ### 验收与产出
 - 页面信息架构（IA）与内容类型清单
@@ -99,8 +100,8 @@
 - [ ] 监控/审计：错误告警、性能观测
 
 ### Week 9: 部署与 Buffer
-- [ ] 配置 CI/CD 流水线 (GitHub Actions)
-- [ ] 部署到生产环境 (S3 + CloudFront / Vercel)
+- [ ] 配置 CI/CD 流水线 (GitHub Actions / GitLab CI)
+- [ ] 部署到生产环境 (Vercel / AWS S3 + CloudFront)
 - [ ] **Buffer**：处理前几周遗留的“没想好的细节”
 
 ### 验收与产出
