@@ -68,15 +68,25 @@
 
 * [11\_PluginAPI\_草案与示例.md](02_Technical_Architecture/11_PluginAPI_草案与示例.md) - 扩展机制
 
-* [11\_开发重难点清单.md](02_Technical_Architecture/11_开发重难点清单.md) - 技术攻坚点
+* [07\_架构演进与优化建议.md](02_Technical_Architecture/07_架构演进与优化建议.md) - **(New)** 针对长期维护的演进方向
 
-## 📂 03\_DevOps\_Risk (运维与风险)
+* [12_测试策略与质量保障.md](02_Technical_Architecture/12_测试策略与质量保障.md) - **(New)** 全链路测试与质量控制规范
+
+* [13_主题开发者快速上手手册.md](02_Technical_Architecture/13_主题开发者快速上手手册.md) - **(New)** 面向开发者的组件与 Schema 开发指南
+
+* [11_开发重难点清单.md](02_Technical_Architecture/11_开发重难点清单.md) - 技术攻坚点
+
+## 📂 03_DevOps_Risk (运维与风险)
 
 包含发布流程、CDN 策略与风险管理。
 
-* [10\_发布审计与回滚流程.md](03_DevOps_Risk/10_发布审计与回滚流程.md) - 发布治理
+* [10_发布审计与回滚流程.md](03_DevOps_Risk/10_发布审计与回滚流程.md) - 发布治理
 
-* [10\_媒体与CDN策略规范.md](03_DevOps_Risk/10_媒体与CDN策略规范.md) - 静态资源策略
+* [12_GitLab_CI_CD配置规范.md](03_DevOps_Risk/12_GitLab_CI_CD配置规范.md) - **(New)** 自动化流水线标准
+
+* [13_合规与隐私保护规范_GDPR_CCPA.md](03_DevOps_Risk/13_合规与隐私保护规范_GDPR_CCPA.md) - **(New)** 全球隐私合规要求
+
+* [10_媒体与CDN策略规范.md](03_DevOps_Risk/10_媒体与CDN策略规范.md) - 静态资源策略
 
 * [10\_核心风险与应对策略.md](03_DevOps_Risk/10_核心风险与应对策略.md) - 风险控制
 
