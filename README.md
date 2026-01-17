@@ -33,24 +33,21 @@
 
 > **决策背景**：拒绝了 Shopify Hydrogen (React)，因为 Vue 的响应式模型更适合构建可视化编辑器，且符合团队现有的技术栈积累。
 
-## Monorepo 结构设计（RFC-001）
+## Monorepo 结构设计（MVP Scheme A）
 
 ```
 repo/
  ├─ apps/
- │   ├─ builder/          # 可视化编辑器 (Vue 3 SPA)
- │   ├─ preview/          # 实时预览 iframe (Vue 3)
- │   └─ site-runtime/     # 生产站点 (Nuxt 3 SSG)
+ │   ├─ atlas-builder/    # 平台编辑器 (Vue 3 SPA)
+ │   ├─ atlas-admin/      # 平台管理后台
+ │   └─ atlas-api/        # Java Backend API
  ├─ packages/
- │   ├─ schema/           # Section / Block DSL (TS)
- │   ├─ renderer/         # JSON → Vue Render Engine
- │   ├─ shopify-adapter/  # Shopify Storefront API
- │   ├─ migrator/         # Theme / Liquid 迁移工具
- │   └─ utils/
- └─ infra/
-     ├─ ci/
-     ├─ cdn/
-     └─ deploy/
+ │   ├─ atlas-sdk/        # 平台 SDK (Hooks/Types)
+ │   ├─ schema/           # Core Schema Definitions
+ │   └─ publisher/        # 构建与发布 Worker
+ ├─ themes/               # 主题工程 (按品牌/体系)
+ ├─ features/             # 能力包 (commerce, tracking)
+ └─ sites/                # 站点实例配置 (Seed Configs)
 ```
 
 ## 核心原则

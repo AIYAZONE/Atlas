@@ -2,6 +2,8 @@
 
 > **目标**: 以 Monorepo 形式实现 Builder/Preview/Site-runtime、后端 Java API，以及 schema/渲染等共享组件，支撑 MVP 的前后端协同开发
 > **验收标准**: 页面可被搜索、Checkout 跳转 Shopify、最终产物为静态输出、Lighthouse ≥ 95
+>
+> **⚠️ 架构版本注意**: 本文档部分目录描述基于早期规划。最新工程结构请以 [07_平台与站点工程边界（MVP方案A）.md](../02_technical_architecture/07_平台与站点工程边界（MVP方案A）.md) 为准。以下目录结构已更新以匹配最新架构。
 
 ---
 
@@ -32,67 +34,47 @@
 ### 2.1 完整目录结构
 ```
 Atlas/
-├── apps/                           # 应用层
-│   ├── builder/                    # 可视化编辑器 (Vue 3 SPA)
+├── apps/                           # 平台应用层
+│   ├── atlas-builder/              # 可视化编辑器 (Vue 3 SPA)
 │   │   ├── src/
-│   │   │   ├── components/         # Builder 组件
-│   │   │   ├── stores/            # Pinia 状态管理
-│   │   │   └── utils/             # 工具函数
+│   │   │   ├── components/
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   ├── package.json
 │   │   └── vite.config.ts
-│   ├── preview/                    # 实时预览 (Vue 3)
-│   │   ├── src/
-│   │   │   ├── components/         # 预览组件
-│   │   │   └── utils/             # 通信工具
-│   │   └── package.json
-│   ├── site-runtime/               # 生产站点 (Nuxt 3 SSG)
-│   │   ├── pages/                  # 页面路由
-│   │   ├── components/            # 页面组件
-│   │   └── nuxt.config.ts
-│   └── backend/                    # Java API 服务
+│   ├── atlas-admin/                # 平台管理后台
+│   └── atlas-api/                  # Java API 服务 (或独立 Repo)
 │       ├── src/main/java/
-│       │   ├── config/            # 配置类
-│       │   ├── controller/        # REST 控制器
-│       │   ├── service/           # 业务逻辑
-│       │   └── repository/        # 数据访问
+│       │   ├── config/
+│       │   ├── controller/
+│       │   ├── service/
+│       │   └── repository/
 │       └── pom.xml
-├── packages/                       # 共享包
+├── packages/                       # 共享核心包
+│   ├── atlas-sdk/                  # 平台 SDK (Hooks/Types)
 │   ├── schema/                     # Schema 定义 (已有)
 │   │   ├── src/
 │   │   │   └── shopify-compatible.ts
-│   │   ├── package.json
 │   │   └── index.ts
-│   ├── renderer/                   # JSON → Vue 渲染引擎
-│   │   ├── src/
-│   │   │   ├── component-factory.ts
-│   │   │   ├── schema-parser.ts
-│   │   │   └── vue-renderer.ts
-│   │   └── package.json
-│   ├── shopify-adapter/            # Shopify API 适配器
-│   │   ├── src/
-│   │   │   ├── storefront-api.ts
-│   │   │   ├── product-picker.ts
-│   │   │   └── cart-manager.ts
-│   │   └── package.json
-│   ├── ui-components/              # 共享 UI 组件库
-│   │   ├── src/
-│   │   │   ├── Button/
-│   │   │   ├── Card/
-│   │   │   └── index.ts
-│   │   └── package.json
-│   └── utils/                      # 工具函数
+│   └── publisher/                  # 构建与发布 Worker (Node)
 │       ├── src/
-│       │   ├── postmessage.ts
-│       │   └── validation.ts
+│       │   ├── renderer.ts
+│       │   └── worker.ts
 │       └── package.json
-├── infra/                          # 基础设施
-│   ├── ci/                         # CI/CD 配置
-│   │   └── .github/workflows/
-│   ├── docker/                     # Docker 配置
-│   └── deploy/                     # 部署脚本
-└── docs/                           # 技术文档
-    ├── api/                        # API 文档
-    └── guides/                     # 使用指南
+├── themes/                         # 主题工程 (按品牌/体系)
+│   ├── jackery-v1/
+│   │   ├── components/
+│   │   └── theme.json
+│   └── package.json
+├── features/                       # 能力包 (可插拔)
+│   ├── commerce/
+│   ├── tracking/
+│   └── cookie-consent/
+└── sites/                          # 站点实例配置 (无业务代码)
+    ├── jackery-us/
+    │   └── config.json
+    └── jackery-jp/
+        └── config.json
 ```
 
 ### 2.2 依赖关系图
