@@ -58,7 +58,8 @@
 ## 9. 插件生命周期钩子（Plugin Hooks）
 - 注册：字段/组件/校验器/渲染器/数据源/发布钩子。
 - 钩子：onRegister/onRender/onPublish/onAfterBuild。
-- 应用：在渲染前注入数据、发布后生成额外产物或通知。
+- 执行位置：onRender 在 Node Preview（预览）与 Node Worker（构建）都会触发，需通过 ctx.mode 区分 preview/build；onPublish/onAfterBuild 在发布任务生命周期内由 Worker 执行。
+- 治理口径：插件/能力包版本必须进入发布审计与回滚的“完整组合版本”记录，避免回滚后行为漂移。
 - 参考：扩展草案 [11_PluginAPI_草案与示例.md](../02_Technical_Architecture/11_PluginAPI_草案与示例.md)。
 
 ## 10. 可观测性与告警（Observability）

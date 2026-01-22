@@ -8,13 +8,13 @@
 
 * 插件清单：id、name、version、capabilities（fields/components/validators/renderers/data-sources/hooks）
 
-* 生命周期钩子：onRegister、onRender、onPublish、onAfterBuild
+* 生命周期钩子：onRegister、onRender、onPublish、onAfterBuild（onRender 需区分 preview/build 模式）
 
 ## 注册接口（草案）
 
 * registerFieldType(type, options)
 
-* registerComponent(name, schema, renderer)
+* registerComponent(type, definition, renderer) // type 必须等于 definition.type，并与 SectionInstance.type 对齐
 
 * registerValidator(name, fn)
 
@@ -44,7 +44,7 @@
 
 ```ts
 registerComponent(
-  'Carousel',
+  'carousel',
   {
     type: 'carousel',
     name: 'Carousel',
@@ -80,6 +80,16 @@ registerComponent(
 )
 ```
 
+## 事件触发时机（建议口径）
+
+* onRegister：插件被装配加载时触发（注册字段/组件/校验/渲染/数据源等）。
+
+* onRender：渲染前触发，必须携带 ctx.mode 区分 `preview`（Node Preview）与 `build`（Node Worker 构建）。
+
+* onPublish：发布任务进入构建前触发（可校验版本组合、注入额外 manifest 信息、预创建外部资源）。
+
+* onAfterBuild：构建产物生成后触发（默认在上传/部署前；如需部署后回调应另设 onAfterDeploy 或在 ctx.stage 中区分）。
+
 ## 兼容与迁移说明
 
 * 旧草案中的 `schema.fields[]` 概念可视为 Shopify 兼容模型里的 `settings[]`（字段类型集合以 SettingType 为准，例如布尔开关使用 `checkbox`）。
@@ -90,13 +100,18 @@ registerComponent(
 
 ```ts
 registerHook('onRender', async (ctx) => {
-  // ctx: { content, locale, route, assets }
-  // 可进行内容预处理或注入额外数据
+  // ctx: { mode: 'preview'|'build', siteId, pageId, locale, route, section, assets }
+  // 可在渲染前注入数据（受权限与资源限额控制）
 });
 
 registerHook('onPublish', async (ctx) => {
-  // ctx: { version, manifest, routes }
-  // 可触发外部通知或额外产物生成
+  // ctx: { jobId, siteId, targetVersion, theme, features, manifest, routes }
+  // 可触发外部通知、写入审计扩展字段或生成额外产物
+});
+
+registerHook('onAfterBuild', async (ctx) => {
+  // ctx: { jobId, siteId, targetVersion, artifacts, manifest }
+  // 可对构建产物做二次处理（默认发生在上传/部署前）
 });
 ```
 
@@ -111,3 +126,5 @@ registerHook('onPublish', async (ctx) => {
 * 插件版本语义化；破坏性变更需迁移脚本与兼容层
 
 * 组织内部插件与第三方插件区分与签名
+
+* 装配口径：插件应以 Theme 或 Feature Pack 形态随站点发布装配（theme@version + features@versions），并进入发布审计与回滚的“完整组合版本”记录

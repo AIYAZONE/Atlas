@@ -14,16 +14,19 @@
 对应 Shopify 的 `templates/*.json` 文件。Atlas 数据库存储完整的 Page 对象。
 
 ```typescript
-interface PageInstance {
-  id: string;          // 内部 UUID
-  name?: string;       // 页面名称
-  type: string;        // 页面类型 (index, product, page)
+interface TemplatePageInstance {
+  name?: string;       // Shopify 内部页面名称（可选）
+  wrapper?: string;    // Atlas 扩展：页面根容器类名（可选）
   sections: Record<string, SectionInstance>; // 扁平化存储所有 Section
   order: string[];     // Section ID 的渲染顺序
-  
-  // Atlas 扩展字段
+}
+
+interface PageRecord {
+  id: string;          // 内部 UUID
+  type: string;        // 页面类型 (index, product, page)
   status: 'draft' | 'published';
-  seo: SEOData;
+  seo?: SEOData;
+  template: TemplatePageInstance; // 对齐 Shopify templates/*.json 的主体结构
 }
 ```
 
@@ -37,6 +40,18 @@ interface SectionInstance {
   settings: Record<string, any>; // 全局配置值
   blocks?: Record<string, BlockInstance>; // 子 Block 实例 (扁平化)
   block_order?: string[]; // Block ID 的渲染顺序
+
+  // Atlas 扩展字段（不参与 Shopify 导入导出）
+  _id?: string;
+  _label?: string;
+}
+
+interface BlockInstance {
+  type: string;
+  settings: Record<string, any>;
+
+  // Atlas 扩展字段
+  _id?: string;
 }
 ```
 
@@ -76,24 +91,38 @@ interface SettingDefinition {
 - `placeholder`：占位提示（支持 t:）
 - `options`：用于 select/radio 等枚举型字段的选项列表
 - `min/max/step/unit`：用于 number/range 等数值型字段的约束与显示单位
-- `accept`：用于 media/file 等类型的白名单（如 image/*）
+- `accept`：用于 `video_url` 等类型的白名单（如 youtube/vimeo）
 
 ## 3. 字段类型 (Setting Types)
 Atlas 支持 Shopify 原生的所有核心字段类型：
+
+说明：下表为常用子集；完整列表以代码 `SettingType` 为准，见 [shopify-compatible.ts](file:///Users/brucewang/Documents/AIYA/Atlas/packages/schema/src/shopify-compatible.ts)。
 
 | 类型 | 说明 | Atlas 对应控件 |
 | :--- | :--- | :--- |
 | `text` | 单行文本 | Input |
 | `textarea` | 多行文本 | Textarea |
 | `richtext` | 富文本 | Tiptap Editor |
+| `number` | 数值输入 | Input |
 | `image_picker` | 图片选择 | Media Library Modal |
 | `color` | 颜色选择 | Color Picker |
+| `color_background` | 背景色 | Color Picker |
 | `url` | 链接 | Link Picker (Page/Product/External) |
+| `video_url` | 视频链接 | Video URL Picker |
+| `font_picker` | 字体选择 | Font Picker |
 | `product` | 产品选择 | Shopify Product Picker |
 | `collection` | 集合选择 | Shopify Collection Picker |
+| `page` | 页面选择 | Page Picker |
+| `blog` | 博客选择 | Blog Picker |
+| `article` | 文章选择 | Article Picker |
 | `checkbox` | 开关 | Switch |
+| `radio` | 单选 | Radio Group |
 | `select` | 下拉选 | Select |
 | `range` | 滑动条 | Slider |
+| `html` | 受控 HTML | HTML Editor |
+| `liquid` | 迁移占位 | Placeholder |
+| `header` | 分组标题 | Heading |
+| `paragraph` | 说明文本 | Paragraph |
 
 ## 4. 高级字段类型与约束
 ### 4.1 高级类型（html/liquid）
