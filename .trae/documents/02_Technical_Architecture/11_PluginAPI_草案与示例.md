@@ -24,11 +24,17 @@
 
 * registerHook(event, handler) // event: 'onRegister'|'onRender'|'onPublish'|'onAfterBuild'
 
+> 说明：现行 Schema 模型对齐 Shopify Theme 2.0：组件 schema 推荐采用 ComponentDefinition（settings/blocks/presets），字段 type 以 SettingType 为准。不存在 `component-list`；需要“可重复子项/列表项”时使用 blocks + block_order 表达。`registerFieldType` 如保留，建议仅用于扩展编辑器控件/元信息与校验能力，落盘结构仍需映射到 SettingType 或 blocks 体系。
+
 ## 数据结构约束
 
-* FieldType：输入/输出类型、可选项与默认值
+* SettingDefinition / SettingType：字段类型集合遵循 Shopify Theme 2.0 兼容定义（如 text/checkbox/select/image_picker/range 等），并支持 default/options/min/max/step 等约束。
 
-* Component：schema（字段集）与渲染器（接收 props → 产出 AST/HTML）
+* ComponentDefinition：组件 schema 由 settings（全局配置项）+ blocks（可重复子项定义，可选）+ presets（默认预设，可选）构成。
+
+* SectionInstance / BlockInstance：页面实例数据使用扁平化结构；可重复子项使用 blocks（map）+ block_order（顺序数组）表达（不使用递归嵌套）。
+
+* Renderer：渲染器以 SectionInstance 为主要输入，结合 schema 与运行时上下文产出 AST/HTML。
 
 * Validator：校验规则返回错误列表
 
@@ -40,20 +46,45 @@
 registerComponent(
   'Carousel',
   {
-    fields: [
-      { id: 'items', type: 'component-list', component: 'CarouselItem' },
-      { id: 'autoplay', type: 'boolean', default: true },
-      { id: 'interval', type: 'number', default: 3000 }
-    ]
+    type: 'carousel',
+    name: 'Carousel',
+    settings: [
+      { id: 'autoplay', type: 'checkbox', label: 'Autoplay', default: true },
+      { id: 'interval', type: 'number', label: 'Interval (ms)', default: 3000, min: 1000, max: 10000, step: 500 }
+    ],
+    blocks: [
+      {
+        type: 'slide',
+        name: 'Slide',
+        settings: [
+          { id: 'image', type: 'image_picker', label: 'Image' },
+          { id: 'link', type: 'url', label: 'Link' }
+        ]
+      }
+    ],
+    presets: [{ name: 'Default', blocks: [{ type: 'slide' }, { type: 'slide' }] }]
   },
-  function render(props) {
+  function render(section) {
+    const orderedBlocks =
+      section.block_order?.map(id => section.blocks?.[id]).filter(Boolean) ?? [];
+
     return {
       type: 'Carousel',
-      children: props.items.map(item => ({ type: 'CarouselItem', props: item }))
+      props: section.settings,
+      children: orderedBlocks.map(block => ({
+        type: 'CarouselSlide',
+        props: block.settings
+      }))
     }
   }
 )
 ```
+
+## 兼容与迁移说明
+
+* 旧草案中的 `schema.fields[]` 概念可视为 Shopify 兼容模型里的 `settings[]`（字段类型集合以 SettingType 为准，例如布尔开关使用 `checkbox`）。
+
+* 旧草案中的“组件列表/可重复子项”不使用递归嵌套；在现行模型里应迁移为 `blocks`（map）+ `block_order`（顺序数组），每个 block 相当于一个列表项。
 
 ## 示例：渲染钩子与发布钩子
 
@@ -80,4 +111,3 @@ registerHook('onPublish', async (ctx) => {
 * 插件版本语义化；破坏性变更需迁移脚本与兼容层
 
 * 组织内部插件与第三方插件区分与签名
-
